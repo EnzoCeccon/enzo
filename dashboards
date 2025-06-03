@@ -1,0 +1,146 @@
+import { useState } from 'react';
+import { Box, Paper, Typography, Grid } from '@mui/material';
+import { ResponsivePie } from '@nivo/pie';
+import { ResponsiveLine } from '@nivo/line';
+import { ResponsiveBar } from '@nivo/bar';
+
+// Dados de exemplo para Convênios Estaduais
+const conveniosPorArea = [
+  { id: 'Saúde', value: 40 },
+  { id: 'Educação', value: 30 },
+  { id: 'Infraestrutura', value: 15 },
+  { id: 'Assistência Social', value: 10 },
+  { id: 'Outros', value: 5 },
+];
+
+const execucaoMensal = [
+  {
+    id: "execução",
+    data: [
+      { x: 'Jan', y: 85 },
+      { x: 'Fev', y: 78 },
+      { x: 'Mar', y: 92 },
+      { x: 'Abr', y: 88 },
+      { x: 'Mai', y: 95 },
+      { x: 'Jun', y: 89 },
+    ],
+  },
+];
+
+const desempenhoRegional = [
+  { regiao: 'Capital', convenios: 180 },
+  { regiao: 'Região Norte', convenios: 120 },
+  { regiao: 'Região Sul', convenios: 150 },
+  { regiao: 'Região Leste', convenios: 90 },
+  { regiao: 'Região Oeste', convenios: 110 },
+];
+
+const Dashboard = () => {
+  const [metricas] = useState({
+    totalConvenios: '1.234',
+    valorTotal: 'R$ 245.678.900',
+    taxaExecucao: '87%',
+    municipiosAtendidos: '156'
+  });
+
+  return (
+    <Box sx={{ flexGrow: 1, p: 3 }}>
+      {/* Métricas principais */}
+      <Grid container spacing={3} mb={3}>
+        {Object.entries(metricas).map(([chave, valor]) => (
+          <Grid item xs={12} sm={6} md={3} key={chave}>
+            <Paper
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                height: 140,
+                bgcolor: '#f5f5f5'
+              }}
+            >
+              <Typography variant="h6" gutterBottom component="div">
+                {chave.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+              </Typography>
+              <Typography variant="h4" component="div">
+                {valor}
+              </Typography>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Gráficos */}
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, height: 400 }}>
+            <Typography variant="h6" gutterBottom>
+              Convênios por Área
+            </Typography>
+            <Box sx={{ height: 350 }}>
+              <ResponsivePie
+                data={conveniosPorArea}
+                margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+                innerRadius={0.5}
+                padAngle={0.7}
+                cornerRadius={3}
+                activeOuterRadiusOffset={8}
+                colors={{ scheme: 'nivo' }}
+                arcLinkLabelsSkipAngle={10}
+                arcLinkLabelsTextColor="#333333"
+              />
+            </Box>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, height: 400 }}>
+            <Typography variant="h6" gutterBottom>
+              Taxa de Execução Mensal (%)
+            </Typography>
+            <Box sx={{ height: 350 }}>
+              <ResponsiveLine
+                data={execucaoMensal}
+                margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+                xScale={{ type: 'point' }}
+                yScale={{ type: 'linear', min: 'auto', max: 100, stacked: true, reverse: false }}
+                curve="cardinal"
+                axisTop={null}
+                axisRight={null}
+                pointSize={10}
+                pointColor={{ theme: 'background' }}
+                pointBorderWidth={2}
+                pointBorderColor={{ from: 'serieColor' }}
+                enableArea={true}
+              />
+            </Box>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2, height: 400 }}>
+            <Typography variant="h6" gutterBottom>
+              Distribuição de Convênios por Região
+            </Typography>
+            <Box sx={{ height: 350 }}>
+              <ResponsiveBar
+                data={desempenhoRegional}
+                keys={['convenios']}
+                indexBy="regiao"
+                margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+                padding={0.3}
+                valueScale={{ type: 'linear' }}
+                colors={{ scheme: 'nivo' }}
+                axisTop={null}
+                axisRight={null}
+                labelSkipWidth={12}
+                labelSkipHeight={12}
+              />
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+export default Dashboard; 
